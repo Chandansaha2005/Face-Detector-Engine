@@ -1,67 +1,63 @@
 import tensorflow as tf
 import numpy as np
 import cv2
-from mtcnn import MTCNN
 import os
 
 class FaceNetRecognizer:
-    """FaceNet-based face recognition system"""
+    """Simplified face recognition with OpenFace"""
     
-    def __init__(self, model_path='facenet_model/facenet_keras.h5'):
-        print("Loading FaceNet model...")
+    def __init__(self, model_path='openface_model/nn4.small2.v1.h5'):
+        print("Loading OpenFace model...")
         
-        # Load FaceNet model
-        self.model = tf.keras.models.load_model(model_path)
-        print(f"✓ FaceNet model loaded from {model_path}")
+        try:
+            # Load model
+            self.model = tf.keras.models.load_model(model_path)
+            print(f"✓ OpenFace model loaded: {model_path}")
+            self.model_loaded = True
+        except Exception as e:
+            print(f"✗ Failed to load model: {e}")
+            print("Using simple face detection only")
+            self.model_loaded = False
+            self.model = None
         
-        # Initialize MTCNN for face detection
-        self.detector = MTCNN()
+        # Use OpenCV's face detector as fallback
+        self.face_cascade = cv2.CascadeClassifier(
+            cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+        )
         
-        # Input shape required by FaceNet
-        self.input_shape = (160, 160)
+        # Input size for OpenFace
+        self.input_shape = (96, 96)
+    
+    def detect_faces_opencv(self, image):
+        """Detect faces using OpenCV Haar Cascade"""
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         
-    def detect_faces(self, image):
-        """Detect faces using MTCNN"""
-        # Convert BGR to RGB (MTCNN expects RGB)
-        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        faces = self.face_cascade.detectMultiScale(
+            gray,
+            scaleFactor=1.1,
+            minNeighbors=5,
+            minSize=(30, 30)
+        )
         
-        # Detect faces
-        detections = self.detector.detect_faces(rgb_image)
-        
-        faces = []
-        for detection in detections:
-            # Get bounding box
-            x, y, width, height = detection['box']
-            
-            # Ensure coordinates are positive
-            x = max(0, x)
-            y = max(0, y)
-            
-            # Extract face
-            face = rgb_image[y:y+height, x:x+width]
-            
-            # Get face landmarks (optional, for alignment)
-            keypoints = detection['keypoints']
-            
-            faces.append({
-                'bbox': (x, y, x+width, y+height),  # (x1, y1, x2, y2)
-                'face': face,
-                'confidence': detection['confidence'],
-                'keypoints': keypoints
+        results = []
+        for (x, y, w, h) in faces:
+            results.append({
+                'bbox': (x, y, x+w, y+h),
+                'face': image[y:y+h, x:x+w]
             })
         
-        return faces
+        return results
     
     def preprocess_face(self, face_image):
-        """Preprocess face for FaceNet"""
-        # Resize to 160x160
+        """Preprocess face for OpenFace model"""
+        # Resize to 96x96 (OpenFace requirement)
         face_resized = cv2.resize(face_image, self.input_shape)
         
         # Convert to float32
         face_float = face_resized.astype('float32')
         
-        # Normalize pixel values (as done in FaceNet training)
-        face_normalized = (face_float - 127.5) / 127.5
+        # Normalize to [0, 1]
+        face_normalized = face_float / 255.0
         
         # Add batch dimension
         face_batch = np.expand_dims(face_normalized, axis=0)
@@ -69,72 +65,25 @@ class FaceNetRecognizer:
         return face_batch
     
     def get_embedding(self, face_image):
-        """Get 128-D embedding from face image"""
-        # Preprocess
-        processed_face = self.preprocess_face(face_image)
+        """Get embedding from face"""
+        if not self.model_loaded:
+            return None
         
-        # Get embedding
-        embedding = self.model.predict(processed_face, verbose=0)[0]
-        
-        # Normalize embedding (unit vector)
-        embedding = embedding / np.linalg.norm(embedding)
-        
-        return embedding
+        try:
+            processed = self.preprocess_face(face_image)
+            embedding = self.model.predict(processed, verbose=0)[0]
+            embedding = embedding / np.linalg.norm(embedding)  # Normalize
+            return embedding
+        except:
+            return None
     
-    def get_embeddings_from_image(self, image_path):
-        """Get embeddings from an image file"""
-        # Read image
-        image = cv2.imread(image_path)
-        if image is None:
-            print(f"Error reading image: {image_path}")
-            return []
+    def compare_faces(self, embedding1, embedding2, threshold=0.5):
+        """Compare two embeddings"""
+        if embedding1 is None or embedding2 is None:
+            return False, 0.0, 1.0
         
-        # Detect faces
-        faces = self.detect_faces(image)
-        
-        embeddings = []
-        for face_data in faces:
-            # Get embedding for each face
-            embedding = self.get_embedding(face_data['face'])
-            
-            embeddings.append({
-                'embedding': embedding,
-                'bbox': face_data['bbox'],
-                'confidence': face_data['confidence']
-            })
-        
-        return embeddings
-    
-    def compare_faces(self, embedding1, embedding2, threshold=0.6):
-        """
-        Compare two face embeddings
-        Returns: (is_match, distance)
-        """
-        # Calculate Euclidean distance
         distance = np.linalg.norm(embedding1 - embedding2)
-        
-        # Convert distance to similarity score (0-1)
         similarity = 1 - min(distance / 2.0, 1.0)
-        
-        # Determine if it's a match
         is_match = distance < threshold
         
         return is_match, similarity, distance
-    
-    def find_best_match(self, query_embedding, database_embeddings):
-        """Find best match in database"""
-        best_match = None
-        best_similarity = 0
-        best_distance = float('inf')
-        
-        for person_id, ref_embedding in database_embeddings.items():
-            is_match, similarity, distance = self.compare_faces(
-                query_embedding, ref_embedding
-            )
-            
-            if similarity > best_similarity:
-                best_similarity = similarity
-                best_distance = distance
-                best_match = person_id
-        
-        return best_match, best_similarity, best_distance

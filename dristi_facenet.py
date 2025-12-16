@@ -15,8 +15,13 @@ class DristiFaceNetSystem:
         print("DRISTI - FaceNet Implementation")
         print("="*60)
         
-        # Initialize FaceNet
-        self.face_net = FaceNetRecognizer()
+        # Initialize FaceNet (handle model load failures gracefully)
+        try:
+           self.face_net = FaceNetRecognizer('openface_model/nn4.small2.v1.h5')
+        except Exception as e:
+            print(f"Error initializing FaceNet model: {e}")
+            print("Face recognition will be disabled until you provide a compatible model in 'facenet_model/facenet_keras.h5'.")
+            self.face_net = None
         
         # Database for storing known faces
         self.known_faces = {}  # person_id -> embedding
@@ -28,7 +33,7 @@ class DristiFaceNetSystem:
         # Initialize database
         self.init_database()
         
-        print("✓ System initialized with FaceNet")
+        print("System initialized with FaceNet")
     
     def create_directories(self):
         """Create required directories"""
@@ -50,7 +55,7 @@ class DristiFaceNetSystem:
                 gender TEXT,
                 case_number TEXT UNIQUE,
                 photo_path TEXT,
-                embedding BLOB,  # Pickled numpy array
+                embedding BLOB,
                 created_at TIMESTAMP,
                 status TEXT DEFAULT 'active'
             )
@@ -70,20 +75,24 @@ class DristiFaceNetSystem:
         ''')
         
         self.conn.commit()
-        print("✓ Database initialized")
+        print("Database initialized")
     
     def add_missing_person(self, name, age, gender, case_number, photo_path):
         """Add a missing person to the system"""
         try:
             # Extract face embedding
+            if not self.face_net:
+                print("ERROR: FaceNet model not loaded; cannot extract embeddings.")
+                return False
+
             embeddings = self.face_net.get_embeddings_from_image(photo_path)
             
             if len(embeddings) == 0:
-                print(f"✗ No face found in {photo_path}")
+                print(f"No face found in {photo_path}")
                 return False
             
             # Use the first face found
-            embedding = embeddings[0]['embedding']
+            embedding = np.asarray(embeddings[0]['embedding'], dtype=np.float32)
             
             # Generate person ID
             person_id = f"MP_{case_number}"
@@ -116,7 +125,7 @@ class DristiFaceNetSystem:
             
             self.conn.commit()
             
-            print(f"✓ Added missing person: {name} (Case: {case_number})")
+            print(f"Added missing person: {name} (Case: {case_number})")
             print(f"  Embedding size: {len(embedding)} dimensions")
             
             return True
@@ -130,9 +139,13 @@ class DristiFaceNetSystem:
         print(f"\nStarting camera feed (ID: {camera_id})...")
         print("Press 'q' to quit, 's' to save snapshot")
         
+        if not self.face_net:
+            print("ERROR: FaceNet model not loaded; cannot start camera monitoring.")
+            return
+
         cap = cv2.VideoCapture(camera_id)
         if not cap.isOpened():
-            print(f"✗ Cannot open camera {camera_id}")
+            print(f"Cannot open camera {camera_id}")
             return
         
         start_time = time.time()
@@ -141,13 +154,13 @@ class DristiFaceNetSystem:
         while True:
             # Check duration
             if time.time() - start_time > duration:
-                print(f"\n⏰ Duration limit reached ({duration} seconds)")
+                print(f"\nDuration limit reached ({duration} seconds)")
                 break
             
             # Read frame
             ret, frame = cap.read()
             if not ret:
-                print("✗ Failed to read frame")
+                print("Failed to read frame")
                 break
             
             frame_count += 1
@@ -164,8 +177,9 @@ class DristiFaceNetSystem:
                 x1, y1, x2, y2 = face_data['bbox']
                 face_img = face_data['face']
                 
-                # Get embedding
+                # Get embedding (ensure float32 for DB storage)
                 embedding = self.face_net.get_embedding(face_img)
+                embedding = np.asarray(embedding, dtype=np.float32)
                 
                 # Find best match
                 best_match, similarity, distance = self.face_net.find_best_match(
@@ -185,8 +199,8 @@ class DristiFaceNetSystem:
                     cv2.putText(frame, "FOUND", (x1, y1 - 40),
                                cv2.FONT_HERSHEY_DUPLEX, 0.7, color, 2)
                     
-                    # Save detection
-                    self.save_detection(best_match, similarity, (x1, y1, x2, y2))
+                    # Save detection (pass full frame so we can save evidence)
+                    self.save_detection(best_match, similarity, (x1, y1, x2, y2), frame)
                     
                 else:
                     # Unknown person - Red box
@@ -208,32 +222,39 @@ class DristiFaceNetSystem:
             # Handle key press
             key = cv2.waitKey(1) & 0xFF
             if key == ord('q'):
-                print("\n🛑 Stopped by user")
+                print("\nStopped by user")
                 break
             elif key == ord('s'):
                 # Save snapshot
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 filename = f"snapshots/snapshot_{timestamp}.jpg"
                 cv2.imwrite(filename, frame)
-                print(f"📸 Snapshot saved: {filename}")
+                print(f"Snapshot saved: {filename}")
         
         # Cleanup
         cap.release()
         cv2.destroyAllWindows()
         
-        print(f"\n📊 Summary:")
+        print(f"\nSummary:")
         print(f"  Frames processed: {frame_count}")
         print(f"  Known faces in database: {len(self.known_faces)}")
     
-    def save_detection(self, person_id, similarity, bbox):
-        """Save detection to database"""
+    def save_detection(self, person_id, similarity, bbox, frame=None):
+        """Save detection to database and optionally save frame image"""
         try:
+            # Use filesystem-safe timestamp for filenames
             timestamp = datetime.now().isoformat()
+            filename_ts = datetime.now().strftime("%Y%m%d_%H%M%S")
             
-            # Save frame as evidence
-            frame_path = f"detections/{person_id}_{timestamp}.jpg"
-            # Note: You need to save the frame here
-            
+            # Save frame as evidence if provided
+            frame_path = f"detections/{person_id}_{filename_ts}.jpg"
+            if frame is not None:
+                try:
+                    cv2.imwrite(frame_path, frame)
+                except Exception as e:
+                    print(f"Warning: failed to write frame to {frame_path}: {e}")
+                    frame_path = None
+
             cursor = self.conn.cursor()
             cursor.execute('''
                 INSERT INTO detections 
@@ -254,14 +275,13 @@ class DristiFaceNetSystem:
             self.send_alert(person_id, similarity)
             
         except Exception as e:
-            print(f"Error saving detection: {e}")
-    
+            print(f"Error saving detection: {e}")    
     def send_alert(self, person_id, similarity):
         """Send alert when person is found"""
         person = self.face_metadata.get(person_id)
         if person:
             print("\n" + "="*60)
-            print(f"🚨 ALERT: {person['name']} FOUND!")
+            print(f"ALERT: {person['name']} FOUND!")
             print(f"   Case: {person['case_number']}")
             print(f"   Confidence: {similarity:.1%}")
             print(f"   Time: {datetime.now().strftime('%H:%M:%S')}")
@@ -288,7 +308,7 @@ class DristiFaceNetSystem:
             self.known_faces[person_id] = embedding
             self.face_metadata[person_id] = {'name': name}
         
-        print(f"✓ Loaded {len(self.known_faces)} faces from database")
+        print(f"Loaded {len(self.known_faces)} faces from database")
 
 def main():
     """Main function"""
@@ -318,7 +338,7 @@ def main():
             if os.path.exists(photo_path):
                 system.add_missing_person(name, age, gender, case_number, photo_path)
             else:
-                print(f"✗ File not found: {photo_path}")
+                print(f"File not found: {photo_path}")
         
         elif choice == "2":
             print("\n📹 Starting CCTV Monitoring")
@@ -328,7 +348,7 @@ def main():
             system.process_camera(duration=duration)
         
         elif choice == "3":
-            print("\n📊 Database Summary")
+            print("\nDatabase Summary")
             print(f"Known faces: {len(system.known_faces)}")
             for person_id, metadata in system.face_metadata.items():
                 print(f"  - {metadata['name']} ({person_id})")
