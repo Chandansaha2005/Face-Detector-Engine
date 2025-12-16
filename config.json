@@ -1,0 +1,13 @@
+{
+    "database": {
+        "path": "dristi_facenet.db"
+    },
+    "face_detection": {
+        "min_confidence": 0.9,
+        "min_face_size": 40
+    },
+    "face_recognition": {
+        "threshold": 0.6,
+        "similarity_threshold": 0.7
+    }
+}
