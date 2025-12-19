@@ -1,0 +1,117 @@
+.alert-page {
+  padding: 20px;
+  color: #e6f6ff;
+}
+
+/* HEADER */
+.alert-header {
+  margin-top: 25px;
+}
+
+.alert-header p {
+  font-size: 13px;
+  color: #9fc9dd;
+}
+
+/* HIGH PRIORITY BANNER */
+.alert-banner {
+  border: 1px solid #ffc107;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 20px;
+  color: #ffd966;
+}
+
+/* ALERT LIST */
+.alert-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.alert-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px;
+  border-radius: 12px;
+  background: rgba(10, 30, 50, 0.85);
+  box-shadow: 0 0 15px rgba(0, 200, 255, 0.15);
+}
+
+.alert-card h4 {
+  margin: 0 0 6px 0;
+}
+
+.alert-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #9fc9dd;
+}
+
+/* SEVERITY */
+.alert-card.critical {
+  border: 1px solid #ff4d4d;
+}
+
+.alert-card.high {
+  border: 1px solid #ffc107;
+}
+
+/* BADGES */
+.alert-card .badge {
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.badge.critical {
+  background: rgba(255, 77, 77, 0.2);
+  color: #ff4d4d;
+  border: 1px solid #ff4d4d;
+}
+
+.badge.high {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  border: 1px solid #ffc107;
+}
+
+/* ACTION SECTION */
+.alert-actions {
+  margin-top: 25px;
+  background: rgba(10, 30, 50, 0.85);
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alert-actions p {
+  font-size: 12px;
+  color: #9fc9dd;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.action-buttons button {
+  background: transparent;
+  border: 1px solid #2b6f8f;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.action-buttons .primary {
+  background: #00b7ff;
+  border: none;
+  color: #00121c;
+  font-weight: bold;
+}
+

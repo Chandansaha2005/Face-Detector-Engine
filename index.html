@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000000">
+  <title>Drishti - Advanced Missing Person Location System</title>
+  <link rel="icon" href="public/favicon.ico">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/connect-cctv.css">
+  <link rel="stylesheet" href="css/upload-person.css">
+  <link rel="stylesheet" href="css/alert-center.css">
+  <link rel="stylesheet" href="css/movement-tracking.css">
+</head>
+<body>
+  <!-- Login Page -->
+  <div id="login-page" class="page active">
+    <div class="login-container">
+      <div class="login-box">
+        <h1 class="title">Drishti</h1>
+        <p class="subtitle">Advanced Missing Person Location System</p>
+        <div class="badge">AUTHORIZED PERSONNEL ONLY</div>
+        <h3>Secure Access</h3>
+        <p class="desc">Enter your credentials to access the monitoring system</p>
+        <input type="text" id="login-id" placeholder="You Unique ID">
+        <input type="password" id="login-password" placeholder="Password">
+        <p class="role-label">Role</p>
+        <div class="roles">
+          <button class="role active" data-role="Field Officer">Field Officer</button>
+          <button class="role" data-role="Command Center">Command Center</button>
+          <button class="role" data-role="Security Analyst">Security Analyst</button>
+          <button class="role" data-role="Emergency Coordinator">Emergency Coordinator</button>
+        </div>
+        <button class="login-btn" id="login-button">Access System</button>
+        <p class="demo">Demo Mode – All roles available for testing</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Post Login / Connect CCTV Page -->
+  <div id="post-login-page" class="page">
+    <nav class="navbar">
+      <div class="nav-left" onclick="navigateTo('/dashboard')">
+        🔒 <span class="brand">Drishti</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="#" onclick="navigateTo('/dashboard'); return false;">Live Monitoring</a></li>
+        <li><a href="#" onclick="navigateTo('/upload-person'); return false;">Upload Person</a></li>
+        <li><a href="#" onclick="navigateTo('/alerts'); return false;">Alert Center</a></li>
+        <li><a href="#" onclick="navigateTo('/movement'); return false;">Movement Tracking</a></li>
+      </ul>
+      <div class="nav-right">
+        <span class="status">SYSTEM ONLINE</span>
+        <button class="logout" onclick="navigateTo('/')">Logout</button>
+      </div>
+    </nav>
+    <div class="connect-page">
+      <header class="connect-header">
+        <h1>Connect CCTV</h1>
+        <p class="subtitle">Connecting to local surveillance systems</p>
+      </header>
+      <main class="connect-body">
+        <div class="connecting" id="connecting-box">
+          <h3 style="margin-bottom: 12px;">Ready to connect</h3>
+          <p class="muted">Press the button below to discover nearby CCTV feeds</p>
+          <div style="margin-top: 14px;">
+            <button class="login-btn" id="connect-cctv-btn">Connect CCTV</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Dashboard Page -->
+  <div id="dashboard-page" class="page">
+    <nav class="navbar">
+      <div class="nav-left" onclick="navigateTo('/dashboard')">
+        🔒 <span class="brand">Drishti</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="#" onclick="navigateTo('/dashboard'); return false;" class="active">Live Monitoring</a></li>
+        <li><a href="#" onclick="navigateTo('/upload-person'); return false;">Upload Person</a></li>
+        <li><a href="#" onclick="navigateTo('/alerts'); return false;">Alert Center</a></li>
+        <li><a href="#" onclick="navigateTo('/movement'); return false;">Movement Tracking</a></li>
+      </ul>
+      <div class="nav-right">
+        <span class="status">SYSTEM ONLINE</span>
+        <button class="logout" onclick="navigateTo('/')">Logout</button>
+      </div>
+    </nav>
+    <div class="dashboard">
+      <div class="stats">
+        <div class="card">
+          <p>Active Cases</p>
+          <h2>3</h2>
+        </div>
+        <div class="card">
+          <p>Matches Found</p>
+          <h2>7</h2>
+        </div>
+        <div class="card">
+          <p>Alerts Today</p>
+          <h2>12</h2>
+        </div>
+        <div class="card">
+          <p>System Status</p>
+          <h2 class="green">Operational</h2>
+        </div>
+      </div>
+      <div class="alert">
+        ⚠️ High Priority: Missing child case #2024-001 – New CCTV match found at Mall Sector C
+      </div>
+      <div class="content">
+        <div class="left-panel">
+          <h3>CCTV Cameras</h3>
+          <div class="camera alert">
+            <strong>Main Entrance</strong>
+            <p>Match detected – 87%</p>
+          </div>
+          <div class="camera">Food Court</div>
+          <div class="camera">Parking Lot A</div>
+          <div class="camera">Emergency Exit</div>
+        </div>
+        <div class="right-panel">
+          <div class="video-header">
+            <h3>Main Entrance</h3>
+            <div>
+              <button>Fullscreen</button>
+              <button>Audio</button>
+            </div>
+          </div>
+          <div class="video">
+            <span class="live">LIVE</span>
+            <div class="match-box">MATCH DETECTED</div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-stats">
+        <div>
+          <h2>247</h2>
+          <p>Faces Scanned (Last Hour)</p>
+        </div>
+        <div>
+          <h2>3</h2>
+          <p>Potential Matches</p>
+        </div>
+        <div>
+          <h2>98.2%</h2>
+          <p>System Accuracy</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Person Page -->
+  <div id="upload-person-page" class="page">
+    <nav class="navbar">
+      <div class="nav-left" onclick="navigateTo('/dashboard')">
+        🔒 <span class="brand">Drishti</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="#" onclick="navigateTo('/dashboard'); return false;">Live Monitoring</a></li>
+        <li><a href="#" onclick="navigateTo('/upload-person'); return false;" class="active">Upload Person</a></li>
+        <li><a href="#" onclick="navigateTo('/alerts'); return false;">Alert Center</a></li>
+        <li><a href="#" onclick="navigateTo('/movement'); return false;">Movement Tracking</a></li>
+      </ul>
+      <div class="nav-right">
+        <span class="status">SYSTEM ONLINE</span>
+        <button class="logout" onclick="navigateTo('/')">Logout</button>
+      </div>
+    </nav>
+    <div class="upload-page">
+      <div class="stats">
+        <div class="card"><p>Active Cases</p><h2>3</h2></div>
+        <div class="card"><p>Matches Found</p><h2>7</h2></div>
+        <div class="card"><p>Alerts Today</p><h2>12</h2></div>
+        <div class="card"><p>System Status</p><h2 class="green">Operational</h2></div>
+      </div>
+      <div class="alert">
+        ⚠️ High Priority: Missing child case #2024-001 – New CCTV match found at Mall Sector C
+      </div>
+      <div class="upload-content">
+        <div class="photo-box">
+          <h3>Photo Upload</h3>
+          <div class="photo-upload" id="photo-upload">
+            Click to upload photo
+            <small>High quality photos improve recognition accuracy</small>
+          </div>
+        </div>
+        <div class="details-box">
+          <h3>Person Details</h3>
+          <div class="row">
+            <input placeholder="Full Name">
+            <input placeholder="Age">
+          </div>
+          <textarea placeholder="Height, clothing, distinguishing features..."></textarea>
+          <div class="row">
+            <input placeholder="Last Seen Time">
+            <input placeholder="Last Known Location">
+          </div>
+          <input placeholder="Emergency Contact">
+        </div>
+      </div>
+      <div class="start-search">
+        <div>
+          <h4>Ready to activate search?</h4>
+          <p>This will start scanning all connected CCTV cameras for matches</p>
+        </div>
+        <button>Start Face Recognition Search</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert Center Page -->
+  <div id="alerts-page" class="page">
+    <nav class="navbar">
+      <div class="nav-left" onclick="navigateTo('/dashboard')">
+        🔒 <span class="brand">Drishti</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="#" onclick="navigateTo('/dashboard'); return false;">Live Monitoring</a></li>
+        <li><a href="#" onclick="navigateTo('/upload-person'); return false;">Upload Person</a></li>
+        <li><a href="#" onclick="navigateTo('/alerts'); return false;" class="active">Alert Center</a></li>
+        <li><a href="#" onclick="navigateTo('/movement'); return false;">Movement Tracking</a></li>
+      </ul>
+      <div class="nav-right">
+        <span class="status">SYSTEM ONLINE</span>
+        <button class="logout" onclick="navigateTo('/')">Logout</button>
+      </div>
+    </nav>
+    <div class="alert-page">
+      <div class="stats">
+        <div class="card">
+          <p>Active Cases</p>
+          <h2>3</h2>
+        </div>
+        <div class="card">
+          <p>Matches Found</p>
+          <h2>7</h2>
+        </div>
+        <div class="card">
+          <p>Alerts Today</p>
+          <h2>12</h2>
+        </div>
+        <div class="card">
+          <p>System Status</p>
+          <h2 class="green">Operational</h2>
+        </div>
+      </div>
+      <div class="alert-banner">
+        ⚠️ High Priority: Missing child case #2024-001 – New CCTV match found at Mall Sector C
+      </div>
+      <div class="alert-header">
+        <h2>Alert Center</h2>
+        <p>Active alerts requiring operator attention</p>
+      </div>
+      <div class="alert-list">
+        <div class="alert-card critical">
+          <div>
+            <h4>High Confidence Match – Emma Johnson</h4>
+            <p>87% facial recognition match detected · Shopping Mall – Main Entrance · CAM-001</p>
+          </div>
+          <span class="badge critical">CRITICAL</span>
+        </div>
+        <div class="alert-card high">
+          <div>
+            <h4>Potential Movement Pattern</h4>
+            <p>Subject moving toward exit zone · Shopping Mall – Food Court · CAM-002</p>
+          </div>
+          <span class="badge high">HIGH</span>
+        </div>
+      </div>
+      <div class="alert-actions">
+        <div>
+          <h4>Quick Actions</h4>
+          <p>Respond to alerts or assign teams immediately</p>
+        </div>
+        <div class="action-buttons">
+          <button class="primary">View Live Feed</button>
+          <button>Assign Officer</button>
+          <button>Mark as Resolved</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Movement Tracking Page -->
+  <div id="movement-page" class="page">
+    <nav class="navbar">
+      <div class="nav-left" onclick="navigateTo('/dashboard')">
+        🔒 <span class="brand">Drishti</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="#" onclick="navigateTo('/dashboard'); return false;">Live Monitoring</a></li>
+        <li><a href="#" onclick="navigateTo('/upload-person'); return false;">Upload Person</a></li>
+        <li><a href="#" onclick="navigateTo('/alerts'); return false;">Alert Center</a></li>
+        <li><a href="#" onclick="navigateTo('/movement'); return false;" class="active">Movement Tracking</a></li>
+      </ul>
+      <div class="nav-right">
+        <span class="status">SYSTEM ONLINE</span>
+        <button class="logout" onclick="navigateTo('/')">Logout</button>
+      </div>
+    </nav>
+    <div class="movement-page">
+      <div class="stats">
+        <div class="card">
+          <p>Active Cases</p>
+          <h2>3</h2>
+        </div>
+        <div class="card">
+          <p>Matches Found</p>
+          <h2>7</h2>
+        </div>
+        <div class="card">
+          <p>Alerts Today</p>
+          <h2>12</h2>
+        </div>
+        <div class="card">
+          <p>System Status</p>
+          <h2 class="green">Operational</h2>
+        </div>
+      </div>
+      <div class="alert-banner">
+        ⚠️ High Priority: Missing child case #2024-001 – Live movement prediction active
+      </div>
+      <div class="movement-header">
+        <h2>Movement Tracking</h2>
+        <p>Visual map of confirmed and predicted locations</p>
+      </div>
+      <div class="movement-content">
+        <div class="person-list">
+          <div class="person active">
+            <div>
+              <strong>Emma Johnson</strong>
+              <p>8 years old</p>
+            </div>
+            <span class="tag tracking">TRACKING</span>
+          </div>
+          <div class="person">
+            <div>
+              <strong>Robert Chen</strong>
+              <p>72 years old</p>
+            </div>
+            <span class="tag found">FOUND</span>
+          </div>
+        </div>
+        <div class="map-panel">
+          <h3>Movement Path: Emma Johnson (8 years old)</h3>
+          <div class="map">
+            <span class="dot confirmed" style="top: 60%; left: 25%;"></span>
+            <span class="dot confirmed" style="top: 45%; left: 45%;"></span>
+            <span class="dot confirmed" style="top: 55%; left: 65%;"></span>
+            <span class="dot predicted" style="top: 40%; left: 75%;"></span>
+            <span class="dot predicted" style="top: 30%; left: 85%;"></span>
+          </div>
+          <div class="legend">
+            <span><i class="confirmed"></i> Confirmed Location</span>
+            <span><i class="predicted"></i> Predicted Path</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
+

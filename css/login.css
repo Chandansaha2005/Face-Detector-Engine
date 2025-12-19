@@ -1,0 +1,109 @@
+.login-container * {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.login-container {
+  height: 100vh;
+  background: radial-gradient(circle at top, #0b3c5d, #021826);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  width: 380px;
+  background: rgba(10, 30, 50, 0.8);
+  border-radius: 14px;
+  padding: 30px;
+  box-shadow: 0 0 25px rgba(0, 200, 255, 0.2);
+  color: #e6f6ff;
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-size: 32px;
+  color: #7ddcff;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #8bbcd6;
+  margin-bottom: 10px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 12px;
+  font-size: 10px;
+  border: 1px solid #4dcfff;
+  border-radius: 20px;
+  color: #4dcfff;
+  margin-bottom: 20px;
+}
+
+.desc {
+  font-size: 12px;
+  color: #9fc9dd;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #2b6f8f;
+  background: #021826;
+  color: white;
+}
+
+.login-box input::placeholder {
+  color: #7aa9c2;
+}
+
+.role-label {
+  text-align: left;
+  font-size: 12px;
+  margin-top: 15px;
+}
+
+.roles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.role {
+  padding: 8px;
+  background: transparent;
+  border: 1px solid #2b6f8f;
+  color: #bfeaff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.role.active {
+  background: #00b7ff;
+  color: #00121c;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 10px;
+  background: #00b7ff;
+  font-weight: bold;
+  cursor: pointer;
+  color: #00121c;
+}
+
+.demo {
+  font-size: 11px;
+  color: #6fa9c5;
+  margin-top: 10px;
+}
+

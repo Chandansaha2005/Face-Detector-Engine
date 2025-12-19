@@ -1,0 +1,109 @@
+/* Reuse base typography and palette from Dashboard */
+.connect-page * { box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
+
+.connect-page {
+  padding: 24px;
+  min-height: calc(100vh - 72px);
+}
+
+.connect-header {
+  text-align: center;
+  margin: 18px auto 28px;
+}
+
+.connect-header h1 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: 0.2px;
+}
+
+.connect-header .subtitle {
+  margin-top: 6px;
+  color: #9fc9dd;
+  font-size: 13px;
+}
+
+.connect-body {
+  display: flex;
+  justify-content: center;
+}
+
+.connecting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: rgba(10,30,50,0.6);
+  padding: 28px 36px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,200,255,0.06);
+  min-width: 360px;
+}
+
+.spinner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 5px solid rgba(255,255,255,0.08);
+  border-top-color: #00b7ff;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.connecting h3 { margin: 0; font-size: 16px; }
+.connecting .muted { color: #9fc9dd; font-size: 13px; margin: 0; }
+
+.camera-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 980px;
+  padding: 8px;
+}
+
+.camera-card {
+  background: rgba(10, 30, 50, 0.8);
+  padding: 14px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,200,255,0.04);
+  transition: transform 220ms ease, opacity 300ms ease;
+  opacity: 1;
+}
+
+.camera-card .card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  font-size: 12px;
+  color: #9fc9dd;
+}
+
+.badge.green { background: linear-gradient(90deg,#0cc58a,#2effa1); color: #012018; font-weight: 600; }
+
+.card-body { color: #cfeffb; font-size: 13px; }
+.location { color: #9fc9dd; font-weight: 600; }
+
+.fade-in { animation: fadeUp 420ms ease both; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive tweaks to match UI density */
+@media (max-width: 700px) {
+  .connect-page { padding: 16px; }
+  .connecting { min-width: unset; width: 100%; }
+}
+

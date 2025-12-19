@@ -1,0 +1,84 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 30px;
+  background: linear-gradient(to right, #05263d, #021826);
+  border-bottom: 1px solid rgba(0, 200, 255, 0.2);
+}
+
+/* LEFT */
+.nav-left {
+  font-size: 20px;
+  font-weight: bold;
+  color: #e6f6ff;
+  cursor: pointer;
+}
+
+.brand {
+  margin-left: 6px;
+}
+
+/* CENTER MENU */
+.nav-menu {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+/* NavLink styles */
+.nav-menu a {
+  text-decoration: none;
+  font-size: 14px;
+  color: #9fc9dd;
+  position: relative;
+  padding-bottom: 6px;
+  transition: color 0.2s ease;
+}
+
+.nav-menu a:hover {
+  color: #ffffff;
+}
+
+/* ACTIVE TAB (Underline like your image) */
+.nav-menu a.active {
+  color: #ffffff;
+}
+
+.nav-menu a.active::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: #00b7ff;
+  left: 0;
+  bottom: 0;
+  border-radius: 5px;
+}
+
+/* RIGHT */
+.nav-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.navbar .status {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #0d6efd;
+  color: white;
+}
+
+.navbar .logout {
+  background: transparent;
+  border: 1px solid #0d6efd;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
